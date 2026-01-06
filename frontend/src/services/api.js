@@ -1,6 +1,6 @@
 /**
- * API service for backend communication
- * Handles HTTP requests to the FastAPI backend
+ * API service for real backend communication
+ * Handles HTTP requests to the real NLP analysis backend
  */
 
 const API_BASE_URL = 'http://localhost:8000/api/v1';
@@ -46,17 +46,27 @@ async function makeRequest(endpoint, options = {}) {
   }
 }
 
-export async function analyzeExplanation(explanation, subject, topic) {
+export async function analyzeExplanation(explanation, topic, subject = null) {
+  const payload = {
+    explanation,
+    topic,
+  };
+  
+  if (subject) {
+    payload.subject = subject;
+  }
+  
   return makeRequest('/analyze', {
     method: 'POST',
-    body: JSON.stringify({
-      explanation,
-      subject,
-      topic,
-    }),
+    body: JSON.stringify(payload),
   });
 }
 
+export async function getTopicOverview(topic) {
+  return makeRequest(`/topic-overview/${encodeURIComponent(topic)}`);
+}
+
 export async function checkHealth() {
-  return makeRequest('/health');
+  const response = await fetch('http://localhost:8000/health');
+  return response.json();
 }

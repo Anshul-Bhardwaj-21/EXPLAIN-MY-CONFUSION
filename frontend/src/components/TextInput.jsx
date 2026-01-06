@@ -1,36 +1,30 @@
 /**
- * Text input component
- * Handles user input for explanation text, subject, and topic selection
+ * Text input component for real NLP analysis
+ * Handles user input for topic and explanation
  */
 
 import React, { useState } from 'react';
 
-const SUBJECTS = [
-  { value: 'data_structures', label: 'Data Structures', icon: '🏗️' },
-  { value: 'algorithms', label: 'Algorithms', icon: '⚡' },
-  { value: 'operating_systems', label: 'Operating Systems', icon: '💻' },
-  { value: 'databases', label: 'Databases', icon: '🗄️' },
-  { value: 'computer_networks', label: 'Computer Networks', icon: '🌐' },
-  { value: 'software_engineering', label: 'Software Engineering', icon: '🛠️' }
-];
-
 function TextInput({ onAnalyze, isLoading }) {
   const [explanation, setExplanation] = useState('');
-  const [subject, setSubject] = useState('');
   const [topic, setTopic] = useState('');
+  const [subject, setSubject] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!explanation.trim() || !subject || !topic.trim()) {
-      alert('Please fill in all fields to get the best analysis results.');
+    if (!explanation.trim() || !topic.trim()) {
+      alert('Please provide both a topic and your explanation.');
       return;
     }
     
-    onAnalyze(explanation, subject, topic);
+    if (explanation.length < 10) {
+      alert('Please provide a more detailed explanation (at least 10 characters).');
+      return;
+    }
+    
+    onAnalyze(explanation, topic, subject || null);
   };
-
-  const selectedSubject = SUBJECTS.find(s => s.value === subject);
 
   return (
     <div>
@@ -44,57 +38,57 @@ function TextInput({ onAnalyze, isLoading }) {
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          📝 Share Your Understanding
+          🧠 Explain Your Understanding
         </h2>
         <p style={{ color: '#6b7280', fontSize: '1rem' }}>
-          Explain a computer science concept in your own words, and get personalized feedback on your understanding.
+          Choose any topic and explain it in your own words. Our system will compare your explanation 
+          with Wikipedia knowledge and provide detailed feedback.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="text-input-form">
         <div className="form-group">
-          <label htmlFor="subject">
-            {selectedSubject ? `${selectedSubject.icon} ` : '📚 '}
-            Subject Area
-          </label>
-          <select 
-            id="subject"
-            value={subject} 
-            onChange={(e) => setSubject(e.target.value)}
-            required
-          >
-            <option value="">Choose your subject...</option>
-            {SUBJECTS.map(subj => (
-              <option key={subj.value} value={subj.value}>
-                {subj.icon} {subj.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-group">
           <label htmlFor="topic">
-            🎯 Specific Topic
+            🎯 Topic (Required)
           </label>
           <input
             type="text"
             id="topic"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            placeholder="e.g., Binary Search Trees, Dijkstra's Algorithm, TCP/IP..."
+            placeholder="e.g., Binary Search Tree, Machine Learning, Photosynthesis, Democracy..."
             required
           />
+          <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+            Enter any topic you want to explain. The system will find relevant Wikipedia content.
+          </small>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="subject">
+            📚 Subject Area (Optional)
+          </label>
+          <input
+            type="text"
+            id="subject"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            placeholder="e.g., Computer Science, Biology, History, Physics..."
+          />
+          <small style={{ color: '#6b7280', fontSize: '0.875rem' }}>
+            Optional: Helps find more specific reference content
+          </small>
         </div>
 
         <div className="form-group">
           <label htmlFor="explanation">
-            💭 Your Explanation
+            💭 Your Explanation (Required)
           </label>
           <textarea
             id="explanation"
             value={explanation}
             onChange={(e) => setExplanation(e.target.value)}
-            placeholder="Explain the concept in your own words. Include how it works, when to use it, examples, or any relationships to other concepts you know..."
+            placeholder="Explain the topic in your own words. Include what you think it is, how it works, why it's important, examples, or any other details you know..."
             rows={6}
             required
           />
@@ -105,7 +99,7 @@ function TextInput({ onAnalyze, isLoading }) {
             display: 'flex',
             justifyContent: 'space-between'
           }}>
-            <span>💡 Tip: The more detailed your explanation, the better feedback you'll receive</span>
+            <span>💡 Tip: More detailed explanations get better analysis</span>
             <span>{explanation.length} characters</span>
           </div>
         </div>
@@ -116,8 +110,23 @@ function TextInput({ onAnalyze, isLoading }) {
           className="analyze-button"
         >
           {isLoading && <span className="loading-spinner"></span>}
-          {isLoading ? 'Analyzing Your Understanding...' : '🔍 Analyze My Explanation'}
+          {isLoading ? 'Analyzing with Wikipedia Knowledge...' : '🔍 Analyze My Explanation'}
         </button>
+        
+        {!isLoading && (
+          <div style={{ 
+            marginTop: '1rem', 
+            padding: '1rem', 
+            background: '#f0f9ff', 
+            borderRadius: '8px',
+            fontSize: '0.875rem',
+            color: '#0369a1'
+          }}>
+            <strong>How it works:</strong> Your explanation will be compared with real Wikipedia content 
+            using natural language processing to identify what you understand correctly, what you missed, 
+            and where there might be confusion.
+          </div>
+        )}
       </form>
     </div>
   );

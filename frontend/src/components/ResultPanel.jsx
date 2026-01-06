@@ -1,22 +1,21 @@
 /**
- * Result panel component
- * Displays analysis results including understood/misunderstood/missing concepts
+ * Result panel component for real NLP analysis results
+ * Displays Wikipedia-based concept comparison and feedback
  */
 
 import React from 'react';
 
-function ConceptList({ concepts, title, className, emptyMessage }) {
+function ConceptSection({ title, concepts, color, emptyMessage }) {
   if (!concepts || concepts.length === 0) {
     return (
-      <div className={`concept-section ${className}`}>
-        <h3>{title}</h3>
+      <div className="concept-section" style={{ marginBottom: '1.5rem' }}>
+        <h3 style={{ color: color, marginBottom: '0.5rem' }}>{title}</h3>
         <div style={{ 
-          padding: '1.5rem', 
-          textAlign: 'center', 
+          padding: '1rem', 
+          background: '#f9fafb',
+          borderRadius: '8px',
           color: '#6b7280',
           fontStyle: 'italic',
-          background: '#f9fafb',
-          borderRadius: '12px',
           border: '2px dashed #d1d5db'
         }}>
           {emptyMessage}
@@ -26,96 +25,33 @@ function ConceptList({ concepts, title, className, emptyMessage }) {
   }
 
   return (
-    <div className={`concept-section ${className}`}>
-      <h3>{title}</h3>
-      <ul>
-        {concepts.map((concept, index) => (
-          <li key={index}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ flex: 1 }}>
-                <strong>{concept.name}</strong>
-                <span className="confidence">
-                  {(concept.confidence * 100).toFixed(0)}% confidence
-                </span>
-              </div>
-              <div style={{ 
-                background: getConfidenceColor(concept.confidence),
-                color: 'white',
-                padding: '0.25rem 0.5rem',
-                borderRadius: '6px',
-                fontSize: '0.75rem',
-                fontWeight: '600'
-              }}>
-                {getConfidenceLabel(concept.confidence)}
-              </div>
-            </div>
-            {concept.details && (
-              <p className="concept-details">{concept.details}</p>
-            )}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function getConfidenceColor(confidence) {
-  if (confidence >= 0.8) return '#059669';
-  if (confidence >= 0.6) return '#d97706';
-  return '#dc2626';
-}
-
-function getConfidenceLabel(confidence) {
-  if (confidence >= 0.8) return 'High';
-  if (confidence >= 0.6) return 'Medium';
-  return 'Low';
-}
-
-function ScoreCircle({ score, label, color }) {
-  const circumference = 2 * Math.PI * 45;
-  const strokeDasharray = circumference;
-  const strokeDashoffset = circumference - (score * circumference);
-
-  return (
-    <div className="score-item" style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ position: 'relative', width: '100px', height: '100px', marginBottom: '0.5rem' }}>
-        <svg width="100" height="100" style={{ transform: 'rotate(-90deg)' }}>
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke="#e5e7eb"
-            strokeWidth="8"
-            fill="transparent"
-          />
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            stroke={color}
-            strokeWidth="8"
-            fill="transparent"
-            strokeDasharray={strokeDasharray}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            style={{ transition: 'stroke-dashoffset 1s ease-in-out' }}
-          />
-        </svg>
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          fontSize: '1.25rem',
-          fontWeight: '700',
-          color: color
-        }}>
-          {(score * 100).toFixed(0)}%
+    <div className="concept-section" style={{ marginBottom: '1.5rem' }}>
+      <h3 style={{ color: color, marginBottom: '0.5rem' }}>{title}</h3>
+      <div style={{ 
+        background: 'white',
+        borderRadius: '8px',
+        border: `2px solid ${color}20`,
+        padding: '1rem'
+      }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+          {concepts.map((concept, index) => (
+            <span 
+              key={index}
+              style={{
+                background: `${color}15`,
+                color: color,
+                padding: '0.25rem 0.75rem',
+                borderRadius: '20px',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: `1px solid ${color}30`
+              }}
+            >
+              {concept}
+            </span>
+          ))}
         </div>
       </div>
-      <label style={{ fontSize: '0.875rem', fontWeight: '600', color: '#374151' }}>
-        {label}
-      </label>
     </div>
   );
 }
@@ -125,67 +61,137 @@ function ResultPanel({ result }) {
     return null;
   }
 
+  if (!result.success) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: '2rem' }}>
+        <h2 style={{ color: '#dc2626', marginBottom: '1rem' }}>❌ Analysis Failed</h2>
+        <p style={{ color: '#6b7280', marginBottom: '1rem' }}>
+          {result.error || 'Unable to analyze your explanation'}
+        </p>
+        <div style={{ 
+          background: '#fef3c7', 
+          padding: '1rem', 
+          borderRadius: '8px',
+          color: '#92400e'
+        }}>
+          <strong>Tip:</strong> Try using a more specific or well-known topic. 
+          The system works best with topics that have Wikipedia articles.
+        </div>
+      </div>
+    );
+  }
+
+  const { student_analysis, reference_info, concept_analysis, explanations, learning_suggestions } = result;
+
   return (
     <div className="result-panel">
-      <h2>📊 Analysis Results</h2>
-      
-      <div className="scores-summary" style={{ display: 'flex', justifyContent: 'space-around', marginBottom: '2rem' }}>
-        <ScoreCircle 
-          score={result.overall_score} 
-          label="Overall Score" 
-          color="#667eea"
-        />
-        <ScoreCircle 
-          score={result.coverage_score} 
-          label="Coverage" 
-          color="#059669"
-        />
-        <ScoreCircle 
-          score={result.correctness_score} 
-          label="Correctness" 
-          color="#dc2626"
-        />
+      <h2 style={{ marginBottom: '1.5rem', color: '#1f2937' }}>
+        📊 Analysis Results for "{result.topic}"
+      </h2>
+
+      {/* Reference Information */}
+      <div style={{ 
+        background: '#f0f9ff', 
+        padding: '1rem', 
+        borderRadius: '8px', 
+        marginBottom: '1.5rem',
+        border: '1px solid #bae6fd'
+      }}>
+        <h3 style={{ color: '#0369a1', marginBottom: '0.5rem' }}>📚 Reference Source</h3>
+        <p style={{ margin: '0.5rem 0', color: '#374151' }}>
+          <strong>Wikipedia Article:</strong> {reference_info.title}
+        </p>
+        <p style={{ margin: '0.5rem 0', color: '#6b7280', fontSize: '0.9rem' }}>
+          {reference_info.summary_preview}
+        </p>
+        <a 
+          href={reference_info.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ color: '#2563eb', textDecoration: 'none', fontSize: '0.875rem' }}
+        >
+          🔗 View full Wikipedia article
+        </a>
       </div>
 
-      <ConceptList 
-        concepts={result.concepts_understood}
-        title="✅ Concepts You Understand Well"
-        className="understood"
-        emptyMessage="No concepts identified as fully understood yet. Keep explaining!"
-      />
-
-      <ConceptList 
-        concepts={result.concepts_misunderstood}
-        title="❌ Concepts That Need Clarification"
-        className="misunderstood"
-        emptyMessage="Great! No major misunderstandings detected in your explanation."
-      />
-
-      <ConceptList 
-        concepts={result.concepts_missing}
-        title="❓ Important Concepts to Explore"
-        className="missing"
-        emptyMessage="Excellent coverage! You've touched on all the key concepts."
-      />
-
-      {result.feedback && (
-        <div className="feedback-section">
-          <h3>💡 Personalized Feedback</h3>
-          <p style={{ lineHeight: '1.6', fontSize: '1rem' }}>{result.feedback}</p>
+      {/* Student Analysis Summary */}
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+        gap: '1rem',
+        marginBottom: '1.5rem'
+      }}>
+        <div className="score-item">
+          <label>Words</label>
+          <span>{student_analysis.word_count}</span>
         </div>
-      )}
+        <div className="score-item">
+          <label>Sentences</label>
+          <span>{student_analysis.sentence_count}</span>
+        </div>
+        <div className="score-item">
+          <label>Similarity</label>
+          <span>{(concept_analysis.similarity_score * 100).toFixed(0)}%</span>
+        </div>
+        <div className="score-item">
+          <label>Key Terms</label>
+          <span>{student_analysis.key_terms.length}</span>
+        </div>
+      </div>
 
-      {result.suggestions && result.suggestions.length > 0 && (
+      {/* Concept Analysis */}
+      <ConceptSection
+        title="✅ Concepts You Got Right"
+        concepts={concept_analysis.correct_concepts}
+        color="#059669"
+        emptyMessage="No matching concepts found with the reference material"
+      />
+
+      <ConceptSection
+        title="❓ Important Concepts You Missed"
+        concepts={concept_analysis.missing_concepts}
+        color="#d97706"
+        emptyMessage="Great! You covered all the main concepts from the reference"
+      />
+
+      <ConceptSection
+        title="🤔 Extra Concepts You Mentioned"
+        concepts={concept_analysis.extra_concepts}
+        color="#7c3aed"
+        emptyMessage="You stayed focused on the core concepts"
+      />
+
+      {/* Detailed Explanations */}
+      <div style={{ marginTop: '2rem' }}>
+        <div className="feedback-section">
+          <h3>✅ What You Got Right</h3>
+          <p>{explanations.what_you_got_right}</p>
+        </div>
+
+        <div className="feedback-section">
+          <h3>❓ What You Missed</h3>
+          <p>{explanations.what_you_missed}</p>
+        </div>
+
+        <div className="feedback-section">
+          <h3>🤔 Where Confusion Might Be</h3>
+          <p>{explanations.where_confusion_is}</p>
+        </div>
+      </div>
+
+      {/* Learning Suggestions */}
+      {learning_suggestions && learning_suggestions.length > 0 && (
         <div className="suggestions-section">
-          <h3>🎯 Next Steps for Learning</h3>
+          <h3>🎯 Learning Suggestions</h3>
           <ul>
-            {result.suggestions.map((suggestion, index) => (
+            {learning_suggestions.map((suggestion, index) => (
               <li key={index}>{suggestion}</li>
             ))}
           </ul>
         </div>
       )}
 
+      {/* Footer */}
       <div style={{ 
         marginTop: '2rem', 
         padding: '1rem', 
@@ -195,7 +201,8 @@ function ResultPanel({ result }) {
         textAlign: 'center'
       }}>
         <p style={{ color: '#92400e', fontWeight: '500', margin: 0 }}>
-          🚀 <strong>Keep Learning!</strong> Try explaining another concept to continue improving your understanding.
+          🧠 <strong>Powered by Real Knowledge:</strong> This analysis used actual Wikipedia content 
+          and natural language processing to compare your explanation with expert knowledge.
         </p>
       </div>
     </div>
