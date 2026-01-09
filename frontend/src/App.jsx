@@ -9,7 +9,7 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{ margin: 0, padding: 0, width: '100vw', overflow: 'hidden' }}>
       <header className="app-header">
         <div className="header-content">
           <div className="logo">
@@ -21,25 +21,9 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="app-main">
+      <main className="app-main" style={{ margin: 0, padding: 0, width: '100vw' }}>
         <Home />
       </main>
-      <footer style={{
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
-        padding: '1.5rem 2rem',
-        textAlign: 'center',
-        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-        color: '#6b7280',
-        fontSize: '0.875rem'
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <p style={{ margin: 0 }}>
-            Built with ❤️ for better learning • Powered by AI & NLP • 
-            <span style={{ color: '#667eea', fontWeight: '600' }}> Keep Learning, Keep Growing!</span>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

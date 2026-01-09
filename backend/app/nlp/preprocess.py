@@ -218,3 +218,114 @@ class RealNLPProcessor:
             'noun_phrases': noun_phrases,
             'processed': True
         }
+    
+    def extract_technical_phrases(self, text: str) -> List[str]:
+        """
+        Extract technical phrases and multi-word terms
+        """
+        # Extract noun phrases and technical terms
+        noun_phrases = self.extract_noun_phrases(text)
+        
+        # Look for common technical patterns
+        technical_patterns = [
+            r'\b\w+\s+algorithm\b',
+            r'\b\w+\s+structure\b',
+            r'\b\w+\s+tree\b',
+            r'\b\w+\s+search\b',
+            r'\b\w+\s+sort\b',
+            r'\btime\s+complexity\b',
+            r'\bspace\s+complexity\b',
+            r'\bbig\s+o\b',
+            r'\bo\(\w+\)',
+        ]
+        
+        import re
+        technical_phrases = []
+        text_lower = text.lower()
+        
+        for pattern in technical_patterns:
+            matches = re.findall(pattern, text_lower)
+            technical_phrases.extend(matches)
+        
+        # Combine with noun phrases
+        all_phrases = list(set(noun_phrases + technical_phrases))
+        return [phrase for phrase in all_phrases if len(phrase) > 3]
+    
+    def analyze_explanation_structure(self, text: str) -> Dict[str, Any]:
+        """
+        Analyze the structure of the explanation for completeness assessment
+        """
+        text_lower = text.lower()
+        sentences = self.segment_sentences(text)
+        
+        # Check for different types of content
+        has_definition = any(indicator in text_lower for indicator in [
+            'is a', 'is an', 'refers to', 'means', 'defined as', 'definition'
+        ])
+        
+        has_examples = any(indicator in text_lower for indicator in [
+            'example', 'for instance', 'such as', 'like', 'including'
+        ])
+        
+        has_process_description = any(indicator in text_lower for indicator in [
+            'works by', 'operates by', 'functions by', 'process', 'steps', 'algorithm'
+        ])
+        
+        has_comparisons = any(indicator in text_lower for indicator in [
+            'unlike', 'similar to', 'different from', 'compared to', 'versus', 'vs'
+        ])
+        
+        # Calculate basic metrics
+        word_count = len([word for word in text.split() if word.isalpha()])
+        sentence_count = len(sentences)
+        
+        return {
+            'has_definition': has_definition,
+            'has_examples': has_examples,
+            'has_process_description': has_process_description,
+            'has_comparisons': has_comparisons,
+            'word_count': word_count,
+            'sentence_count': sentence_count,
+            'avg_sentence_length': word_count / max(sentence_count, 1)
+        }
+    
+    def extract_concept_mentions(self, text: str, concept_list: List[str]) -> List[str]:
+        """
+        Extract mentions of specific concepts from the text
+        """
+        text_lower = text.lower()
+        mentioned_concepts = []
+        
+        for concept in concept_list:
+            concept_words = concept.lower().replace('_', ' ').split()
+            
+            # Check if all words of the concept appear in the text
+            if all(word in text_lower for word in concept_words):
+                mentioned_concepts.append(concept)
+            
+            # Also check for partial matches
+            elif any(word in text_lower for word in concept_words if len(word) > 3):
+                mentioned_concepts.append(concept)
+        
+        return list(set(mentioned_concepts))
+
+
+class TextPreprocessor:
+    """
+    Legacy class name for backward compatibility
+    """
+    
+    def __init__(self):
+        self.processor = RealNLPProcessor()
+    
+    def extract_key_terms(self, text: str) -> List[str]:
+        return self.processor.extract_key_terms(text)
+    
+    def extract_technical_phrases(self, text: str) -> List[str]:
+        return self.processor.extract_technical_phrases(text)
+    
+    def analyze_explanation_structure(self, text: str) -> Dict[str, Any]:
+        return self.processor.analyze_explanation_structure(text)
+    
+    def extract_concept_mentions(self, text: str, concept_list: List[str]) -> List[str]:
+        return self.processor.extract_concept_mentions(text, concept_list)

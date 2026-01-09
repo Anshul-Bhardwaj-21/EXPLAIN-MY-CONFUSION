@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .result { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        button { padding: 10px 20px; margin: 5px; }
+        textarea { width: 100%; height: 100px; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Frontend API Test</h1>
+    
+    <div class="test-section">
+        <h2>Test Analysis API</h2>
+        <textarea id="explanation" placeholder="Enter your explanation here...">A binary search tree is a data structure where each node has at most two children. The left child contains values smaller than the parent node, and the right child contains values larger than the parent node.</textarea>
+        <br>
+        <input type="text" id="topic" placeholder="Topic" value="binary search tree" style="width: 200px;">
+        <input type="text" id="subject" placeholder="Subject (optional)" value="computer science" style="width: 200px;">
+        <br>
+        <button onclick="testAnalysis()">🔍 Test Analysis</button>
+        <button onclick="clearResults()">🧹 Clear Results</button>
+        
+        <div id="results" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000/api/v1';
+        
+        async function testAnalysis() {
+            const explanation = document.getElementById('explanation').value;
+            const topic = document.getElementById('topic').value;
+            const subject = document.getElementById('subject').value;
+            const resultsDiv = document.getElementById('results');
+            
+            resultsDiv.innerHTML = '⏳ Testing API call...';
+            
+            const payload = {
+                explanation: explanation,
+                topic: topic,
+                subject: subject || null
+            };
+            
+            console.log('🚀 Starting API test...', payload);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/analyze`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                console.log('📨 Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`HTTP ${response.status}: ${errorData.detail || response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('📄 Response data:', data);
+                
+                if (data.success) {
+                    resultsDiv.className = 'result success';
+                    resultsDiv.innerHTML = `
+                        <h3>✅ Analysis Successful!</h3>
+                        <p><strong>Topic:</strong> ${data.topic}</p>
+                        <p><strong>Word Count:</strong> ${data.student_analysis.word_count}</p>
+                        <p><strong>Similarity:</strong> ${(data.concept_analysis.similarity_score * 100).toFixed(1)}%</p>
+                        <p><strong>Correct Concepts:</strong> ${data.concept_analysis.correct_concepts.join(', ')}</p>
+                        <p><strong>Missing Concepts:</strong> ${data.concept_analysis.missing_concepts.join(', ')}</p>
+                        <p><strong>Reference:</strong> ${data.reference_info.title}</p>
+                        <details>
+                            <summary>Full Response</summary>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </details>
+                    `;
+                } else {
+                    resultsDiv.className = 'result error';
+                    resultsDiv.innerHTML = `<h3>❌ Analysis Failed</h3><p>${data.error}</p>`;
+                }
+                
+            } catch (error) {
+                console.error('💥 API Error:', error);
+                resultsDiv.className = 'result error';
+                resultsDiv.innerHTML = `<h3>💥 Error</h3><p>${error.message}</p>`;
+            }
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('results').className = 'result';
+        }
+        
+        // Test on page load
+        window.addEventListener('load', () => {
+            console.log('🌐 Frontend API Test Page Loaded');
+            console.log('🔗 API Base URL:', API_BASE_URL);
+        });
+    </script>
+</body>
+</html>

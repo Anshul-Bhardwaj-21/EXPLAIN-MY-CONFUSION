@@ -76,56 +76,45 @@ This is a **complete, trained system** that uses:
     └── package.json
 ```
 
-## 🚀 Setup Instructions
+## 🚀 Quick Start
+
+### **Easy Setup (Recommended)**
+
+1. **Run the automated setup script:**
+   ```bash
+   # Windows (Command Prompt)
+   start_servers.bat
+   
+   # OR Windows (PowerShell)
+   .\start_servers.ps1
+   ```
+
+2. **Wait for both servers to start:**
+   - Backend: http://localhost:8000
+   - Frontend: http://localhost:3000 (opens automatically)
+
+3. **Start analyzing!** The app will open in your browser.
+
+### **Manual Setup**
+
+**Backend (Terminal 1):**
+```bash
+cd backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+**Frontend (Terminal 2):**
+```bash
+cd frontend
+npm install
+npm start
+```
 
 ### **Prerequisites**
 - Python 3.7+ (for backend)
 - Node.js 14+ (for frontend)
 - npm (comes with Node.js)
-
-### **Backend Setup**
-
-1. Navigate to backend directory:
-```bash
-cd backend
-```
-
-2. Install dependencies:
-```bash
-pip install fastapi uvicorn pydantic networkx python-multipart pytest httpx numpy scikit-learn nltk textblob
-```
-
-3. **Train the model** (generates knowledge base):
-```bash
-python train_model.py
-```
-
-4. **Evaluate model performance**:
-```bash
-python -m app.evaluation.model_evaluator
-```
-
-5. Start the backend server:
-```bash
-python -m uvicorn app.main:app --reload --port 8000
-```
-
-### **Frontend Setup**
-
-1. Navigate to frontend directory:
-```bash
-cd frontend
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Start the development server:
-```bash
-npm start
-```
 
 ## 🎓 How It Works
 

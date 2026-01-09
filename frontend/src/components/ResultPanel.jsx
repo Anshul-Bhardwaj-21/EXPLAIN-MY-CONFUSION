@@ -8,15 +8,27 @@ import React from 'react';
 function ConceptSection({ title, concepts, color, emptyMessage }) {
   if (!concepts || concepts.length === 0) {
     return (
-      <div className="concept-section" style={{ marginBottom: '1.5rem' }}>
-        <h3 style={{ color: color, marginBottom: '0.5rem' }}>{title}</h3>
+      <div className="concept-section" style={{ marginBottom: '2rem' }}>
+        <h3 style={{ 
+          color: color, 
+          marginBottom: '1rem',
+          fontSize: '1.3rem',
+          fontWeight: '700',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem'
+        }}>
+          {title}
+        </h3>
         <div style={{ 
-          padding: '1rem', 
-          background: '#f9fafb',
-          borderRadius: '8px',
+          padding: '2rem', 
+          background: 'linear-gradient(135deg, #f9fafb, #f3f4f6)',
+          borderRadius: '16px',
           color: '#6b7280',
           fontStyle: 'italic',
-          border: '2px dashed #d1d5db'
+          border: '2px dashed #d1d5db',
+          textAlign: 'center',
+          fontSize: '1.1rem'
         }}>
           {emptyMessage}
         </div>
@@ -25,30 +37,66 @@ function ConceptSection({ title, concepts, color, emptyMessage }) {
   }
 
   return (
-    <div className="concept-section" style={{ marginBottom: '1.5rem' }}>
-      <h3 style={{ color: color, marginBottom: '0.5rem' }}>{title}</h3>
+    <div className="concept-section" style={{ marginBottom: '2rem' }}>
+      <h3 style={{ 
+        color: color, 
+        marginBottom: '1rem',
+        fontSize: '1.3rem',
+        fontWeight: '700',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem'
+      }}>
+        {title}
+      </h3>
       <div style={{ 
         background: 'white',
-        borderRadius: '8px',
-        border: `2px solid ${color}20`,
-        padding: '1rem'
+        borderRadius: '16px',
+        border: `3px solid ${color}20`,
+        padding: '1.5rem',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)'
       }}>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div style={{ 
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+          gap: '1rem'
+        }}>
           {concepts.map((concept, index) => (
-            <span 
+            <div
               key={index}
               style={{
-                background: `${color}15`,
+                background: `linear-gradient(135deg, ${color}10, ${color}05)`,
                 color: color,
-                padding: '0.25rem 0.75rem',
-                borderRadius: '20px',
-                fontSize: '0.875rem',
-                fontWeight: '500',
-                border: `1px solid ${color}30`
+                padding: '1rem 1.5rem',
+                borderRadius: '12px',
+                fontSize: '1rem',
+                fontWeight: '600',
+                border: `2px solid ${color}30`,
+                textAlign: 'center',
+                transition: 'all 0.3s ease',
+                cursor: 'default',
+                position: 'relative',
+                overflow: 'hidden'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = `0 8px 20px ${color}20`;
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = 'none';
               }}
             >
+              <div style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '3px',
+                background: color
+              }}></div>
               {concept}
-            </span>
+            </div>
           ))}
         </div>
       </div>
@@ -117,25 +165,115 @@ function ResultPanel({ result }) {
       {/* Student Analysis Summary */}
       <div style={{ 
         display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
-        gap: '1rem',
-        marginBottom: '1.5rem'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+        gap: '1.5rem',
+        marginBottom: '2rem'
       }}>
-        <div className="score-item">
-          <label>Words</label>
-          <span>{student_analysis.word_count}</span>
+        <div className="score-item" style={{
+          background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
+          padding: '1.5rem',
+          borderRadius: '16px',
+          textAlign: 'center',
+          border: '2px solid #bae6fd',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #0ea5e9, #06b6d4)'
+          }}></div>
+          <label style={{ fontSize: '0.9rem', color: '#0369a1', fontWeight: '600' }}>Words</label>
+          <span style={{ fontSize: '2rem', fontWeight: '800', color: '#0c4a6e', display: 'block' }}>
+            {student_analysis.word_count}
+          </span>
         </div>
-        <div className="score-item">
-          <label>Sentences</label>
-          <span>{student_analysis.sentence_count}</span>
+        
+        <div className="score-item" style={{
+          background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
+          padding: '1.5rem',
+          borderRadius: '16px',
+          textAlign: 'center',
+          border: '2px solid #bbf7d0',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #10b981, #059669)'
+          }}></div>
+          <label style={{ fontSize: '0.9rem', color: '#059669', fontWeight: '600' }}>Sentences</label>
+          <span style={{ fontSize: '2rem', fontWeight: '800', color: '#064e3b', display: 'block' }}>
+            {student_analysis.sentence_count}
+          </span>
         </div>
-        <div className="score-item">
-          <label>Similarity</label>
-          <span>{(concept_analysis.similarity_score * 100).toFixed(0)}%</span>
+        
+        <div className="score-item" style={{
+          background: 'linear-gradient(135deg, #fefce8, #fef3c7)',
+          padding: '1.5rem',
+          borderRadius: '16px',
+          textAlign: 'center',
+          border: '2px solid #fde68a',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #f59e0b, #d97706)'
+          }}></div>
+          <label style={{ fontSize: '0.9rem', color: '#d97706', fontWeight: '600' }}>Similarity</label>
+          <span style={{ fontSize: '2rem', fontWeight: '800', color: '#92400e', display: 'block' }}>
+            {(concept_analysis.similarity_score * 100).toFixed(0)}%
+          </span>
+          <div style={{
+            marginTop: '0.5rem',
+            height: '6px',
+            background: '#fde68a',
+            borderRadius: '3px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${concept_analysis.similarity_score * 100}%`,
+              background: 'linear-gradient(90deg, #f59e0b, #d97706)',
+              borderRadius: '3px',
+              transition: 'width 1s ease-out'
+            }}></div>
+          </div>
         </div>
-        <div className="score-item">
-          <label>Key Terms</label>
-          <span>{student_analysis.key_terms.length}</span>
+        
+        <div className="score-item" style={{
+          background: 'linear-gradient(135deg, #fdf2f8, #fce7f3)',
+          padding: '1.5rem',
+          borderRadius: '16px',
+          textAlign: 'center',
+          border: '2px solid #f9a8d4',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '4px',
+            background: 'linear-gradient(90deg, #ec4899, #db2777)'
+          }}></div>
+          <label style={{ fontSize: '0.9rem', color: '#be185d', fontWeight: '600' }}>Key Terms</label>
+          <span style={{ fontSize: '2rem', fontWeight: '800', color: '#831843', display: 'block' }}>
+            {student_analysis.key_terms.length}
+          </span>
         </div>
       </div>
 
@@ -162,48 +300,241 @@ function ResultPanel({ result }) {
       />
 
       {/* Detailed Explanations */}
-      <div style={{ marginTop: '2rem' }}>
-        <div className="feedback-section">
-          <h3>✅ What You Got Right</h3>
-          <p>{explanations.what_you_got_right}</p>
+      <div style={{ 
+        marginTop: '3rem',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+        gap: '2rem'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)',
+          padding: '2rem',
+          borderRadius: '20px',
+          border: '3px solid #bbf7d0',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '5px',
+            background: 'linear-gradient(90deg, #10b981, #059669)'
+          }}></div>
+          <h3 style={{
+            color: '#059669',
+            fontSize: '1.4rem',
+            fontWeight: '700',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            ✅ What You Got Right
+          </h3>
+          <p style={{
+            color: '#064e3b',
+            fontSize: '1.1rem',
+            lineHeight: '1.6',
+            margin: 0
+          }}>
+            {explanations.what_you_got_right}
+          </p>
         </div>
 
-        <div className="feedback-section">
-          <h3>❓ What You Missed</h3>
-          <p>{explanations.what_you_missed}</p>
+        <div style={{
+          background: 'linear-gradient(135deg, #fefce8, #fef3c7)',
+          padding: '2rem',
+          borderRadius: '20px',
+          border: '3px solid #fde68a',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '5px',
+            background: 'linear-gradient(90deg, #f59e0b, #d97706)'
+          }}></div>
+          <h3 style={{
+            color: '#d97706',
+            fontSize: '1.4rem',
+            fontWeight: '700',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            ❓ What You Missed
+          </h3>
+          <p style={{
+            color: '#92400e',
+            fontSize: '1.1rem',
+            lineHeight: '1.6',
+            margin: 0
+          }}>
+            {explanations.what_you_missed}
+          </p>
         </div>
 
-        <div className="feedback-section">
-          <h3>🤔 Where Confusion Might Be</h3>
-          <p>{explanations.where_confusion_is}</p>
+        <div style={{
+          background: 'linear-gradient(135deg, #fdf2f8, #fce7f3)',
+          padding: '2rem',
+          borderRadius: '20px',
+          border: '3px solid #f9a8d4',
+          position: 'relative',
+          overflow: 'hidden',
+          gridColumn: 'span 2'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '5px',
+            background: 'linear-gradient(90deg, #ec4899, #db2777)'
+          }}></div>
+          <h3 style={{
+            color: '#be185d',
+            fontSize: '1.4rem',
+            fontWeight: '700',
+            marginBottom: '1rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            🤔 Where Confusion Might Be
+          </h3>
+          <p style={{
+            color: '#831843',
+            fontSize: '1.1rem',
+            lineHeight: '1.6',
+            margin: 0
+          }}>
+            {explanations.where_confusion_is}
+          </p>
         </div>
       </div>
 
       {/* Learning Suggestions */}
       {learning_suggestions && learning_suggestions.length > 0 && (
-        <div className="suggestions-section">
-          <h3>🎯 Learning Suggestions</h3>
-          <ul>
+        <div style={{
+          marginTop: '3rem',
+          background: 'linear-gradient(135deg, #f0f9ff, #e0f2fe)',
+          padding: '2.5rem',
+          borderRadius: '24px',
+          border: '3px solid #bae6fd',
+          position: 'relative',
+          overflow: 'hidden'
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '6px',
+            background: 'linear-gradient(90deg, #0ea5e9, #06b6d4)'
+          }}></div>
+          <h3 style={{
+            color: '#0369a1',
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            marginBottom: '1.5rem',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem'
+          }}>
+            🎯 Learning Suggestions
+          </h3>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '1.5rem'
+          }}>
             {learning_suggestions.map((suggestion, index) => (
-              <li key={index}>{suggestion}</li>
+              <div
+                key={index}
+                style={{
+                  background: 'white',
+                  padding: '1.5rem',
+                  borderRadius: '16px',
+                  border: '2px solid #bae6fd',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  background: '#0ea5e9'
+                }}></div>
+                <div style={{
+                  color: '#0369a1',
+                  fontSize: '1.1rem',
+                  lineHeight: '1.6',
+                  fontWeight: '500'
+                }}>
+                  {suggestion}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
       )}
 
       {/* Footer */}
       <div style={{ 
-        marginTop: '2rem', 
-        padding: '1rem', 
+        marginTop: '3rem', 
+        padding: '2rem', 
         background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
-        borderRadius: '12px',
-        border: '1px solid #f59e0b',
-        textAlign: 'center'
+        borderRadius: '20px',
+        border: '3px solid #f59e0b',
+        textAlign: 'center',
+        position: 'relative',
+        overflow: 'hidden'
       }}>
-        <p style={{ color: '#92400e', fontWeight: '500', margin: 0 }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '5px',
+          background: 'linear-gradient(90deg, #f59e0b, #d97706)'
+        }}></div>
+        <p style={{ 
+          color: '#92400e', 
+          fontWeight: '600', 
+          margin: 0,
+          fontSize: '1.1rem',
+          lineHeight: '1.6'
+        }}>
           🧠 <strong>Powered by Real Knowledge:</strong> This analysis used actual Wikipedia content 
           and natural language processing to compare your explanation with expert knowledge.
         </p>
+        <div style={{
+          marginTop: '1rem',
+          display: 'flex',
+          justifyContent: 'center',
+          gap: '2rem',
+          flexWrap: 'wrap'
+        }}>
+          <span style={{ color: '#92400e', fontSize: '0.9rem', fontWeight: '500' }}>
+            📚 Wikipedia API
+          </span>
+          <span style={{ color: '#92400e', fontSize: '0.9rem', fontWeight: '500' }}>
+            🤖 NLP Processing
+          </span>
+          <span style={{ color: '#92400e', fontSize: '0.9rem', fontWeight: '500' }}>
+            🧮 Semantic Analysis
+          </span>
+        </div>
       </div>
     </div>
   );
